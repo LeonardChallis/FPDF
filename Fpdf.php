@@ -2,11 +2,13 @@
 /*******************************************************************************
 * FPDF                                                                         *
 *                                                                              *
-* Version: 1.7 (mod)                                                           *
+* Version: 1.7 (mod 1)                                                           *
 * Date:    2011-06-18                                                          *
 * Author:  Olivier PLATHEY                                                     *
 * Modified by Leonard Challis (@LeonardChallis) to PHP5                        *
 *******************************************************************************/
+
+define('FPDF_VERSION', '1.7 (mod 1)');
 
 class Fpdf
 {
@@ -32,12 +34,12 @@ class Fpdf
     private $bMargin; // page break margin
     private $cMargin; // cell margin
     private $x, $y; // current position in user unit
-    private $lasth; // height of last printed cell
+    private $lastH; // height of last printed cell
     private $lineWidth; // line width in user unit
-    private $fontpath; // path containing fonts
+    private $fontPath; // path containing fonts
     private $coreFonts; // array of core font names
     private $fonts; // array of used fonts
-    private $FontFiles; // array of font files
+    private $fontFiles; // array of font files
     private $diffs; // array of encoding differences
     private $fontFamily; // current font family
     private $fontStyle; // current font style
@@ -79,13 +81,13 @@ class Fpdf
         $this->pageSizes = array();
         $this->state = 0;
         $this->fonts = array();
-        $this->FontFiles = array();
+        $this->fontFiles = array();
         $this->diffs = array();
         $this->images = array();
         $this->links = array();
         $this->inHeader = false;
         $this->inFooter = false;
-        $this->lasth = 0;
+        $this->lastH = 0;
         $this->fontFamily = '';
         $this->fontStyle = '';
         $this->fontSizePt = 12;
@@ -97,13 +99,13 @@ class Fpdf
         $this->ws = 0;
         // Font path
         if (defined('FPDF_FONTPATH')) {
-            $this->fontpath = FPDF_FONTPATH;
-            if (substr($this->fontpath, -1) != '/' && substr($this->fontpath, -1) != '\\')
-                $this->fontpath .= '/';
+            $this->fontPath = FPDF_FONTPATH;
+            if (substr($this->fontPath, -1) != '/' && substr($this->fontPath, -1) != '\\')
+                $this->fontPath .= '/';
         } elseif (is_dir(dirname(__FILE__) . '/font')) {
-            $this->fontpath = dirname(__FILE__) . '/font/';
+            $this->fontPath = dirname(__FILE__) . '/font/';
         } else {
-            $this->fontpath = '';
+            $this->fontPath = '';
         }
         // Core fonts
         $this->coreFonts = array(
@@ -352,7 +354,7 @@ class Fpdf
         }
         // Page footer
         $this->inFooter = true;
-        $this->Footer();
+        $this->footer();
         $this->inFooter = false;
         // Close page
         $this->endPage();
@@ -377,7 +379,7 @@ class Fpdf
         if ($this->page > 0) {
             // Page footer
             $this->inFooter = true;
-            $this->Footer();
+            $this->footer();
             $this->inFooter = false;
             // Close page
             $this->endPage();
@@ -391,7 +393,7 @@ class Fpdf
         $this->out(sprintf('%.2F w', $lw * $this->k));
         // Set font
         if ($family) {
-            $this->SetFont($family, $style, $fontsize);
+            $this->setFont($family, $style, $fontsize);
         }
         // Set colors
         $this->drawColor = $dc;
@@ -406,7 +408,7 @@ class Fpdf
         $this->colorFlag = $cf;
         // Page header
         $this->inHeader = true;
-        $this->Header();
+        $this->header();
         $this->inHeader = false;
         // Restore line width
         if ($this->lineWidth != $lw) {
@@ -415,7 +417,7 @@ class Fpdf
         }
         // Restore font
         if ($family) {
-            $this->SetFont($family, $style, $fontsize);
+            $this->setFont($family, $style, $fontsize);
         }
         // Restore colors
         if ($this->drawColor != $dc) {
@@ -554,11 +556,11 @@ class Fpdf
         if (!empty($info['file'])) {
             // Embedded font
             if ($info['type'] == 'TrueType') {
-                $this->FontFiles[$info['file']] = array(
+                $this->fontFiles[$info['file']] = array(
                     'length1' => $info['originalsize']
                 );
             } else {
-                $this->FontFiles[$info['file']] = array(
+                $this->fontFiles[$info['file']] = array(
                     'length1' => $info['size1'],
                     'length2' => $info['size2']
                 );
@@ -605,7 +607,7 @@ class Fpdf
                 }
                 $fontkey = $family . $style;
                 if (!isset($this->fonts[$fontkey])) {
-                    $this->AddFont($family, $style);
+                    $this->addFont($family, $style);
                 }
             } else {
                 $this->error('Undefined font: ' . $family . ' ' . $style);
@@ -741,9 +743,9 @@ class Fpdf
         }
         if ($txt !== '') {
             if ($align == 'R') {
-                $dx = $w - $this->cMargin - $this->GetStringWidth($txt);
+                $dx = $w - $this->cMargin - $this->getStringWidth($txt);
             } elseif ($align == 'C') {
-                $dx = ($w - $this->GetStringWidth($txt)) / 2;
+                $dx = ($w - $this->getStringWidth($txt)) / 2;
             } else {
                 $dx = $this->cMargin;
             }
@@ -759,13 +761,13 @@ class Fpdf
                 $s .= ' Q';
             }
             if ($link) {
-                $this->link($this->x + $dx, $this->y + .5 * $h - .5 * $this->fontSize, $this->GetStringWidth($txt), $this->fontSize, $link);
+                $this->link($this->x + $dx, $this->y + .5 * $h - .5 * $this->fontSize, $this->getStringWidth($txt), $this->fontSize, $link);
             }
         }
         if ($s) {
             $this->out($s);
         }
-        $this->lasth = $h;
+        $this->lastH = $h;
         if ($ln > 0) {
             // Go to next line
             $this->y += $h;
@@ -961,7 +963,7 @@ class Fpdf
         // Line feed; default value is last cell height
         $this->x = $this->lMargin;
         if ($h === null) {
-            $this->y += $this->lasth;
+            $this->y += $this->lastH;
         } else {
             $this->y += $h;
         }
@@ -1237,7 +1239,7 @@ class Fpdf
     protected function loadFont($font)
     {
         // Load a font definition file from the font directory
-        include ($this->fontpath . $font);
+        include ($this->fontPath . $font);
         $a = get_defined_vars();
         if (!isset($a['name'])) {
             $this->error('Could not include font definition file');
@@ -1293,7 +1295,7 @@ class Fpdf
         // Underline text
         $up = $this->currentfont['up'];
         $ut = $this->currentfont['ut'];
-        $w = $this->GetStringWidth($txt) + $this->ws * substr_count($txt, ' ');
+        $w = $this->getStringWidth($txt) + $this->ws * substr_count($txt, ' ');
         return sprintf('%.2F %.2F %.2F %.2F re f', $x * $this->k, ($this->h - ($y - $up / 1000 * $this->fontSize)) * $this->k, $w * $this->k, -$ut / 1000 * $this->fontSizePt);
     }
 
@@ -1645,11 +1647,11 @@ class Fpdf
             $this->out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences [' . $diff . ']>>');
             $this->out('endobj');
         }
-        foreach ($this->FontFiles as $file => $info) {
+        foreach ($this->fontFiles as $file => $info) {
             // Font file embedding
             $this->newObj();
-            $this->FontFiles[$file]['n'] = $this->n;
-            $font = file_get_contents($this->fontpath . $file, true);
+            $this->fontFiles[$file]['n'] = $this->n;
+            $font = file_get_contents($this->fontPath . $file, true);
             if (!$font) {
                 $this->error('Font file not found: ' . $file);
             }
@@ -1717,7 +1719,7 @@ class Fpdf
                     $s .= ' /' . $k . ' ' . $v;
                 }
                 if (!empty($font['file'])) {
-                    $s .= ' /FontFile' . ($type == 'Type1' ? '' : '2') . ' ' . $this->FontFiles[$font['file']]['n'] . ' 0 R';
+                    $s .= ' /FontFile' . ($type == 'Type1' ? '' : '2') . ' ' . $this->fontFiles[$font['file']]['n'] . ' 0 R';
                 }
                 $this->out($s . '>>');
                 $this->out('endobj');
