@@ -2,13 +2,13 @@
 /*******************************************************************************
 * FPDF                                                                         *
 *                                                                              *
-* Version: 1.7 (mod 1)                                                           *
+* Version: 1.7 (mod 2)                                                           *
 * Date:    2011-06-18                                                          *
 * Author:  Olivier PLATHEY                                                     *
 * Modified by Leonard Challis (@LeonardChallis) to PHP5                        *
 *******************************************************************************/
 
-define('FPDF_VERSION', '1.7 (mod 1)');
+define('FPDF_VERSION', '1.7 (mod 2)');
 
 class Fpdf
 {
@@ -432,23 +432,23 @@ class Fpdf
         $this->colorFlag = $cf;
     }
 
-    public function Header()
+    public function header()
     {
         // To be implemented in your own inherited class
     }
 
-    public function Footer()
+    public function footer()
     {
         // To be implemented in your own inherited class
     }
 
-    public function PageNo()
+    public function pageNo()
     {
         // Get current page number
         return $this->page;
     }
 
-    public function SetDrawColor($r, $g = null, $b = null)
+    public function setDrawColor($r, $g = null, $b = null)
     {
         // Set color for all stroking operations
         if (($r == 0 && $g == 0 && $b == 0) || $g === null) {
@@ -461,7 +461,7 @@ class Fpdf
         }
     }
 
-    public function SetFillColor($r, $g = null, $b = null)
+    public function setFillColor($r, $g = null, $b = null)
     {
         // Set color for all filling operations
         if (($r == 0 && $g == 0 && $b == 0) || $g === null) {
@@ -475,7 +475,7 @@ class Fpdf
         }
     }
 
-    public function SetTextColor($r, $g = null, $b = null)
+    public function setTextColor($r, $g = null, $b = null)
     {
         // Set color for text
         if (($r == 0 && $g == 0 && $b == 0) || $g === null) {
@@ -486,7 +486,7 @@ class Fpdf
         $this->colorFlag = ($this->fillColor != $this->textColor);
     }
 
-    public function GetStringWidth($s)
+    public function getStringWidth($s)
     {
         // Get width of a string in the current font
         $s = (string)$s;
@@ -499,7 +499,7 @@ class Fpdf
         return $w * $this->fontSize / 1000;
     }
 
-    public function SetLineWidth($width)
+    public function setLineWidth($width)
     {
         // Set line width
         $this->lineWidth = $width;
@@ -508,13 +508,13 @@ class Fpdf
         }
     }
 
-    public function Line($x1, $y1, $x2, $y2)
+    public function line($x1, $y1, $x2, $y2)
     {
         // Draw a line
         $this->out(sprintf('%.2F %.2F m %.2F %.2F l S', $x1 * $this->k, ($this->h - $y1) * $this->k, $x2 * $this->k, ($this->h - $y2) * $this->k));
     }
 
-    public function Rect($x, $y, $w, $h, $style = '')
+    public function rect($x, $y, $w, $h, $style = '')
     {
         // Draw a rectangle
         if ($style == 'F') {
@@ -527,7 +527,7 @@ class Fpdf
         $this->out(sprintf('%.2F %.2F %.2F %.2F re %s', $x * $this->k, ($this->h - $y) * $this->k, $w * $this->k, -$h * $this->k, $op));
     }
 
-    public function AddFont($family, $style = '', $file = '')
+    public function addFont($family, $style = '', $file = '')
     {
         // Add a TrueType, OpenType or Type1 font
         $family = strtolower($family);
@@ -569,7 +569,7 @@ class Fpdf
         $this->fonts[$fontkey] = $info;
     }
 
-    public function SetFont($family, $style = '', $size = 0)
+    public function setFont($family, $style = '', $size = 0)
     {
         // Select a font; size given in points
         if ($family == '') {
@@ -624,7 +624,7 @@ class Fpdf
         }
     }
 
-    public function SetFontSize($size)
+    public function setFontSize($size)
     {
         // Set font size in points
         if ($this->fontSizePt == $size) {
@@ -779,7 +779,7 @@ class Fpdf
         }
     }
 
-    public function multicell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
+    public function multiCell($w, $h, $txt, $border = 0, $align = 'J', $fill = false)
     {
         // Output text with automatic or explicit line breaks
         $cw = &$this->currentfont['cw'];
@@ -1239,7 +1239,7 @@ class Fpdf
     protected function loadFont($font)
     {
         // Load a font definition file from the font directory
-        include ($this->fontPath . $font);
+        include $this->fontPath . $font;
         $a = get_defined_vars();
         if (!isset($a['name'])) {
             $this->error('Could not include font definition file');
