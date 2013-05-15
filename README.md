@@ -12,4 +12,4 @@ In theory you can drop this in to your site and it should just work, by only cha
 
 Leonard Challis
 http://blog.leonardchallis.com/fpdf-updated-to-php-5-with-psr-1-and-2-ish/
-twitter.com/LeonardChallis
+http://twitter.com/LeonardChallis
