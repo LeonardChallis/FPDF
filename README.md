@@ -8,8 +8,7 @@ FPDF is a fantastic script for writing PDF files in PHP. It is written by Olivie
 - Indentation fixed
 - General syntax cleanup
 
-In theory you can drop this in to your site and it should just work, by only changing the class name. Functions are different case but PHP doesn't recognise this anyway. Please, feel free to further improve :)
+In theory you can drop this in to your site and it should just work, by only changing the class name. Functions are different case but PHP doesn't recognise this anyway. Yay, hacks! Please, feel free to further improve, as I just put it up here in case anyone needed it as a starting point.
 
 Leonard Challis
-http://blog.leonardchallis.com/fpdf-updated-to-php-5-with-psr-1-and-2-ish/
 http://twitter.com/LeonardChallis
